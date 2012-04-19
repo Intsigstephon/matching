@@ -27,7 +27,7 @@ available. To build Giraph and the matching tools, run the following commands on
 git and Maven installed:
 
 	git clone git://github.com/apache/giraph.git
-	git clone git://github.com:cloudera/matching.git
+	git clone git://github.com/cloudera/matching.git
 	cd giraph
 	mvn install
 	cd ../matching
