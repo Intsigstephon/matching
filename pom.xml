@@ -13,7 +13,7 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-core</artifactId>
-      <version>0.20.2-cdh3u3</version>
+      <version>0.20.2-cdh3u4</version>
       <scope>provided</scope>
     </dependency>
 
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>com.cloudera.crunch</groupId>
       <artifactId>crunch</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.3</version>
     </dependency>
 
     <dependency>
