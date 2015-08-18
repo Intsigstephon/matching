@@ -48,7 +48,11 @@ public class AuctionMessage implements WritableComparable<AuctionMessage> {
     this.signal = signal;
     this.value = value;
   }
-  
+
+  public AuctionMessage copy() {
+    return new AuctionMessage(new Text(vertexId.toString()), signal, value);
+  }
+
   public Text getVertexId() {
     return vertexId;
   }

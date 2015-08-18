@@ -4,7 +4,7 @@
 
   <groupId>com.cloudera.science</groupId>
   <artifactId>matching</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
 
   <name>matching</name>
@@ -12,21 +12,21 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-core</artifactId>
-      <version>0.20.2-cdh3u4</version>
+      <artifactId>hadoop-client</artifactId>
+      <version>2.4.1</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.giraph</groupId>
-      <artifactId>giraph</artifactId>
-      <version>0.2-SNAPSHOT</version>
+      <artifactId>giraph-core</artifactId>
+      <version>1.1.0-hadoop2</version>
     </dependency>
 
     <dependency>
-      <groupId>com.cloudera.crunch</groupId>
-      <artifactId>crunch</artifactId>
-      <version>0.2.4</version>
+      <groupId>org.apache.crunch</groupId>
+      <artifactId>crunch-core</artifactId>
+      <version>0.13.0</version>
     </dependency>
 
     <dependency>
@@ -36,19 +36,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>maven-hadoop</id>
-      <name>Hadoop Releases</name>
-      <url>https://repository.cloudera.com/content/repositories/releases/</url>
-    </repository>
-    <repository>
-      <id>cloudera-local</id>
-      <name>Cloudera Snapshots</name>
-      <url>https://repository.cloudera.com/artifactory/libs-release-local/</url>
-    </repository>
-  </repositories>
 
   <build>
     <plugins>

@@ -18,10 +18,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.apache.crunch.PCollection;
+import org.apache.crunch.impl.mem.MemPipeline;
 import org.junit.Test;
 
-import com.cloudera.crunch.PCollection;
-import com.cloudera.crunch.impl.mem.MemPipeline;
 import com.cloudera.science.matching.VertexData;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;

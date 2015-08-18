@@ -16,9 +16,8 @@ package com.cloudera.science.matching.graph;
 
 import java.io.IOException;
 
-import org.apache.giraph.graph.BasicVertex;
-import org.apache.giraph.graph.VertexWriter;
-import org.apache.giraph.lib.TextVertexOutputFormat;
+import org.apache.giraph.graph.Vertex;
+import org.apache.giraph.io.formats.TextVertexOutputFormat;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.RecordWriter;
@@ -32,29 +31,39 @@ import com.cloudera.science.matching.VertexData;
  * OutputFormat for BipartiteMatchingVertex.
  */
 public class BipartiteMatchingVertexOutputFormat extends
-    TextVertexOutputFormat<Text, VertexState, IntWritable> {
+        TextVertexOutputFormat<Text, VertexState, IntWritable> {
+
   @Override
-  public VertexWriter<Text, VertexState, IntWritable> createVertexWriter(
-      TaskAttemptContext context) throws IOException, InterruptedException {
-    return new BipartiteMatchingVertexWriter(textOutputFormat.getRecordWriter(context));
+  public TextVertexWriter createVertexWriter(TaskAttemptContext taskAttemptContext) throws IOException, InterruptedException {
+    return new BipartiteMatchingVertexWriter();
   }
-  
-  public static class BipartiteMatchingVertexWriter extends TextVertexWriter<Text, VertexState, IntWritable> {
-    private static final Text BLANK = new Text("");
-    
+
+  private static final Text BLANK = new Text("");
+
+  public class BipartiteMatchingVertexWriter extends TextVertexWriter {
+
     private ObjectMapper mapper;
-    
-    public BipartiteMatchingVertexWriter(RecordWriter<Text, Text> lineRecordWriter) {
-      super(lineRecordWriter);
+    private RecordWriter<Text, Text> writer;
+
+    public BipartiteMatchingVertexWriter() {
       this.mapper = new ObjectMapper();
     }
-    
+
     @Override
-    public void writeVertex(BasicVertex<Text, VertexState, IntWritable, ?> vertex)
+    public void initialize(TaskAttemptContext context) throws IOException, InterruptedException {
+      this.writer = createLineRecordWriter(context);
+    }
+
+    @Override
+    public void writeVertex(Vertex<Text, VertexState, IntWritable> bmv)
         throws IOException, InterruptedException {
-      BipartiteMatchingVertex bmv = (BipartiteMatchingVertex) vertex;
-      VertexData vertexData = new VertexData(bmv.getVertexId(), bmv.getVertexValue(), bmv.getEdges());
-      getRecordWriter().write(BLANK, new Text(mapper.writeValueAsString(vertexData)));
+      VertexData vertexData = new VertexData(bmv.getId(), bmv.getValue(), bmv.getEdges());
+      writer.write(BLANK, new Text(mapper.writeValueAsString(vertexData)));
+    }
+
+    @Override
+    public void close(TaskAttemptContext context) throws IOException, InterruptedException {
+      this.writer.close(context);
     }
   }
 }

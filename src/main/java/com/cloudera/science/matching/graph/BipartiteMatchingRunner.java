@@ -14,7 +14,10 @@
  */
 package com.cloudera.science.matching.graph;
 
-import org.apache.giraph.graph.GiraphJob;
+import org.apache.giraph.conf.GiraphConfiguration;
+import org.apache.giraph.edge.ArrayListEdges;
+import org.apache.giraph.io.formats.GiraphFileInputFormat;
+import org.apache.giraph.job.GiraphJob;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -39,17 +42,19 @@ public class BipartiteMatchingRunner extends Configured implements Tool {
       System.err.println("on your Hadoop cluster.");
       return 1;
     }
-    
+
     GiraphJob job = new GiraphJob(getConf(), getClass().getName());
-    
-    job.setVertexClass(BipartiteMatchingVertex.class);
-    job.setVertexInputFormatClass(BipartiteMatchingVertexInputFormat.class);
-    job.setVertexOutputFormatClass(BipartiteMatchingVertexOutputFormat.class);
-    FileInputFormat.addInputPath(job.getInternalJob(), new Path(args[0]));
+    GiraphConfiguration conf = job.getConfiguration();
+    conf.setVertexClass(BipartiteMatchingVertex.class);
+    conf.setVertexInputFormatClass(BipartiteMatchingVertexInputFormat.class);
+    conf.setVertexOutputFormatClass(BipartiteMatchingVertexOutputFormat.class);
+    conf.setComputationClass(BipartiteMatching.class);
+    conf.setOutEdgesClass(ArrayListEdges.class);
+    GiraphFileInputFormat.addVertexInputPath(job.getConfiguration(), new Path(args[0]));
     FileOutputFormat.setOutputPath(job.getInternalJob(), new Path(args[1]));
     
     int numWorkers = Integer.parseInt(args[2]);
-    job.setWorkerConfiguration(numWorkers, numWorkers, 100.0f);
+    job.getConfiguration().setWorkerConfiguration(numWorkers, numWorkers, 100.0f);
     
     return job.run(true) ? 0 : -1;
   }

@@ -14,21 +14,21 @@
  */
 package com.cloudera.science.matching.crunch;
 
+import org.apache.crunch.DoFn;
+import org.apache.crunch.Emitter;
+import org.apache.crunch.PCollection;
+import org.apache.crunch.Pipeline;
+import org.apache.crunch.impl.mr.MRPipeline;
+import org.apache.crunch.io.From;
+import org.apache.crunch.io.To;
+import org.apache.crunch.types.PType;
+import org.apache.crunch.types.PTypes;
+import org.apache.crunch.types.writable.WritableTypeFamily;
+import org.apache.crunch.types.writable.Writables;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import com.cloudera.crunch.DoFn;
-import com.cloudera.crunch.Emitter;
-import com.cloudera.crunch.PCollection;
-import com.cloudera.crunch.Pipeline;
-import com.cloudera.crunch.impl.mr.MRPipeline;
-import com.cloudera.crunch.io.From;
-import com.cloudera.crunch.io.To;
-import com.cloudera.crunch.type.PType;
-import com.cloudera.crunch.type.writable.WritableTypeFamily;
-import com.cloudera.crunch.type.writable.Writables;
-import com.cloudera.crunch.util.PTypes;
 import com.cloudera.science.matching.VertexData;
 
 /**

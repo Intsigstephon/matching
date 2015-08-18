@@ -15,8 +15,13 @@
 package com.cloudera.science.matching;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
+import com.cloudera.science.matching.graph.BipartiteMatchingEdge;
+import com.google.common.collect.Lists;
+import org.apache.giraph.edge.DefaultEdge;
+import org.apache.giraph.edge.Edge;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 
@@ -55,12 +60,12 @@ public class VertexData {
     this.priceIndex = Maps.newHashMap();
   }
 
-  public VertexData(Text vertexId, VertexState vertexState, Map<Text, IntWritable> edges) {
+  public VertexData(Text vertexId, VertexState vertexState, Iterable<Edge<Text, IntWritable>> edges) {
     this.vertexId = vertexId.toString();
     this.bidder = vertexState.isBidder();
     this.edges = Maps.newHashMap();
-    for (Map.Entry<Text, IntWritable> e : edges.entrySet()) {
-      this.edges.put(e.getKey().toString(), e.getValue().get());
+    for (Edge<Text, IntWritable> e : edges) {
+      this.edges.put(e.getTargetVertexId().toString(), e.getValue().get());
     }
     this.priceIndex = Maps.newHashMap();
     for (Map.Entry<Text, BigDecimal> e : vertexState.getPriceIndex().entrySet()) {
@@ -119,10 +124,10 @@ public class VertexData {
    * 
    * @return the Giraph-compatible form of the edge data for this vertex
    */
-  public Map<Text, IntWritable> extractEdges() {
-    Map<Text, IntWritable> out = Maps.newHashMap();
+  public Iterable<Edge<Text, IntWritable>> extractEdges() {
+    List<Edge<Text, IntWritable>> out = Lists.newArrayList();
     for (Map.Entry<String, Integer> e : edges.entrySet()) {
-      out.put(new Text(e.getKey()), new IntWritable(e.getValue()));
+      out.add(new BipartiteMatchingEdge(new Text(e.getKey()), new IntWritable(e.getValue())));
     }
     return out;
   }

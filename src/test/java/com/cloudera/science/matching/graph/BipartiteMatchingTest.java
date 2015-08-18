@@ -19,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
+import org.apache.giraph.conf.GiraphConfiguration;
+import org.apache.giraph.edge.ArrayListEdges;
 import org.apache.giraph.utils.InternalVertexRunner;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
@@ -32,11 +34,14 @@ public class BipartiteMatchingTest {
   ObjectMapper mapper = new ObjectMapper();
   
   private Map<String, VertexData> run(String[] data) throws Exception {
-    Iterable<String> res = InternalVertexRunner.run(BipartiteMatchingVertex.class,
-        BipartiteMatchingVertexInputFormat.class,
-        BipartiteMatchingVertexOutputFormat.class,
-        Maps.<String, String>newHashMap(), data);
-    
+    GiraphConfiguration conf = new GiraphConfiguration();
+    conf.setVertexClass(BipartiteMatchingVertex.class);
+    conf.setVertexInputFormatClass(BipartiteMatchingVertexInputFormat.class);
+    conf.setVertexOutputFormatClass(BipartiteMatchingVertexOutputFormat.class);
+    conf.setComputationClass(BipartiteMatching.class);
+    conf.setOutEdgesClass(ArrayListEdges.class);
+    Iterable<String> res = InternalVertexRunner.run(conf, data);
+
     Map<String, VertexData> out = Maps.newHashMap();
     for (String line : res) {
       VertexData d = mapper.readValue(line, VertexData.class);

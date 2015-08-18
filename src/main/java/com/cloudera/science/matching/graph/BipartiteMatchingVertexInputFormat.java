@@ -16,9 +16,8 @@ package com.cloudera.science.matching.graph;
 
 import java.io.IOException;
 
-import org.apache.giraph.graph.BasicVertex;
-import org.apache.giraph.graph.VertexReader;
-import org.apache.giraph.lib.TextVertexInputFormat;
+import org.apache.giraph.graph.Vertex;
+import org.apache.giraph.io.formats.TextVertexInputFormat;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -34,18 +33,18 @@ import com.cloudera.science.matching.VertexData;
  * Input format for the BipartiteMatchingVertex.
  */
 public class BipartiteMatchingVertexInputFormat extends
-    TextVertexInputFormat<Text, VertexState, IntWritable, AuctionMessage> {
+        TextVertexInputFormat<Text, VertexState, IntWritable> {
   @Override
-  public VertexReader<Text, VertexState, IntWritable, AuctionMessage> createVertexReader(
+  public TextVertexReader createVertexReader(
       InputSplit split, TaskAttemptContext context) throws IOException {
-    return new BipartiteMatchingVertexReader(textInputFormat.createRecordReader(split, context));
+    return new BipartiteMatchingVertexReader();
   }
   
-  public static class BipartiteMatchingVertexReader extends TextVertexReader<Text, VertexState, IntWritable, AuctionMessage> {
+  public class BipartiteMatchingVertexReader extends TextVertexReader {
+
     private ObjectMapper mapper;
     
-    public BipartiteMatchingVertexReader(RecordReader<LongWritable, Text> rr) {
-      super(rr);
+    public BipartiteMatchingVertexReader() {
       this.mapper = new ObjectMapper();
     }
 
@@ -55,11 +54,12 @@ public class BipartiteMatchingVertexInputFormat extends
     }
 
     @Override
-    public BasicVertex<Text, VertexState, IntWritable, AuctionMessage> getCurrentVertex()
+    public Vertex<Text, VertexState, IntWritable> getCurrentVertex()
         throws IOException, InterruptedException {
       VertexData vertexData = mapper.readValue(getRecordReader().getCurrentValue().toString(), VertexData.class);
       BipartiteMatchingVertex v = new BipartiteMatchingVertex();
-      v.initialize(vertexData.extractVertexId(), vertexData.extractVertexState(), vertexData.extractEdges(), null);
+      v.setConf(getConf());
+      v.initialize(vertexData.extractVertexId(), vertexData.extractVertexState(), vertexData.extractEdges());
       return v;
     }
   }
